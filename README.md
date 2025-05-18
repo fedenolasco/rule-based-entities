@@ -6,6 +6,8 @@ This 3D representation serves as a prototype to visualize concepts from the arti
 * AI Rule-Based Entities: Abstraction, Evaluation, AGI/ASI Futures ([https://datatunnel.io/ai-rule-based-entities-abstraction-evaluation-agi-asi-futures/](https://datatunnel.io/ai-rule-based-entities-abstraction-evaluation-agi-asi-futures/))
 * ACI Architecture Evaluation Methodology ([https://datatunnel.io/aci-architecture-evaluation-methodology/](https://datatunnel.io/aci-architecture-evaluation-methodology/))
 
+![Demo screen](./demo-screen.png)
+
 ## Features
 
 * **Interactive 3D Scene:** Visualizes different abstraction layers as distinct 3D shapes (Tori, Cylinders, and grouped components).
