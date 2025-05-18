@@ -6,7 +6,7 @@ This 3D representation serves as a prototype to visualize concepts from the arti
 * AI Rule-Based Entities: Abstraction, Evaluation, AGI/ASI Futures ([https://datatunnel.io/ai-rule-based-entities-abstraction-evaluation-agi-asi-futures/](https://datatunnel.io/ai-rule-based-entities-abstraction-evaluation-agi-asi-futures/))
 * ACI Architecture Evaluation Methodology ([https://datatunnel.io/aci-architecture-evaluation-methodology/](https://datatunnel.io/aci-architecture-evaluation-methodology/))
 
-![Demo screen](./demo-screen.png)
+![Demo screen](./demo-screen.jpg)
 
 ## Features
 
