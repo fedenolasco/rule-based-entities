@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InnovateHealth - Corrected Left Panel Layout</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Black background for neon effect */
+            color: #F3F4F6; 
+            overflow: hidden; 
+        }
+        #scene-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        #main-title {
+            position: fixed;
+            top: 15px; 
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.6rem; 
+            font-weight: 700;
+            color: #00ffdd; 
+            text-shadow: 0 0 8px rgba(0, 255, 221, 0.7), 0 0 12px rgba(0, 255, 221, 0.5);
+            z-index: 30;
+            text-align: center;
+            padding: 0 10px; 
+        }
+        #info-panel {
+            position: fixed;
+            top: 70px; 
+            right: 20px;
+            width: 350px; 
+            max-height: calc(100vh - 160px); 
+            background-color: rgba(20, 20, 20, 0.9); 
+            border: 1px solid #00ffdd; 
+            border-radius: 0.5rem; 
+            padding: 1.5rem; 
+            box-shadow: 0 0 15px rgba(0, 255, 221, 0.5); 
+            display: none; 
+            overflow-y: auto;
+            color: #E0E0E0; 
+            z-index: 20;
+        }
+        #info-panel h2 {
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: #00ffdd; 
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px #00ffdd;
+        }
+        #info-panel p {
+            font-size: 0.875rem; 
+            margin-bottom: 0.75rem; 
+            line-height: 1.5; 
+        }
+        #info-panel strong {
+            font-weight: 600;
+            color: #ff00ff; 
+            display: block; 
+            margin-bottom: 0.25rem;
+            text-shadow: 0 0 3px #ff00ff;
+        }
+        #close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #00ffdd; 
+            font-size: 1.8rem;
+            cursor: pointer;
+            text-shadow: 0 0 5px #00ffdd;
+        }
+         #close-button:hover {
+            color: #ffffff; 
+            text-shadow: 0 0 10px #ffffff;
+        }
+        #info-panel::-webkit-scrollbar { width: 8px; }
+        #info-panel::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 0.5rem; }
+        #info-panel::-webkit-scrollbar-thumb { background: #00ffdd; border-radius: 0.5rem; }
+        #info-panel::-webkit-scrollbar-thumb:hover { background: #00ffff; }
+        
+        #intro-text {
+            position: fixed;
+            top: 70px; 
+            left: 20px;
+            width: 300px; 
+            background-color: rgba(20, 20, 20, 0.85);
+            border: 1px solid #ff00ff; 
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            color: #E0E0E0;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
+            z-index: 20;
+        }
+
+        #instructions { 
+            position: fixed;
+            /* Adjusted top: Will be dynamically set or use a larger fixed value */
+            top: 230px; /* Initial estimate, may need JS to set precisely after intro-text height is known */
+            left: 20px;
+            width: 300px; /* Match intro and legend width */
+            background-color: rgba(20, 20, 20, 0.85);
+            border: 1px solid #ff00ff; 
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            color: #E0E0E0;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
+            z-index: 20;
+        }
+
+        #html-legend {
+            position: fixed;
+            /* Adjusted top: Will be dynamically set or use a larger fixed value */
+            top: 310px; /* Initial estimate */
+            left: 20px;
+            width: 300px; 
+            max-height: calc(100vh - 390px); /* Adjusted for all top elements and footer */
+            background-color: rgba(10, 10, 10, 0.85);
+            border: 1px solid #00ff00; 
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            z-index: 10;
+            overflow-y: auto;
+            color: #D0D0D0;
+        }
+        .html-legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem; 
+            margin-bottom: 0.6rem; 
+            cursor: pointer; 
+        }
+        .html-legend-item:hover {
+            color: #ffffff;
+        }
+        .html-legend-color-box {
+            width: 14px;
+            height: 14px;
+            margin-right: 0.6rem;
+            border: 1px solid #555;
+            flex-shrink: 0; 
+        }
+        .html-legend-arrow {
+            margin-left: auto; 
+            color: #00ff00; 
+            font-size: 1.2em;
+            padding-left: 0.5rem;
+        }
+         #html-legend::-webkit-scrollbar { width: 6px; }
+         #html-legend::-webkit-scrollbar-track { background: #2a2a2a; }
+         #html-legend::-webkit-scrollbar-thumb { background: #00ff00; }
+
+        #footer-explanation {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(10, 10, 10, 0.85);
+            border: 1px solid #ffff00; 
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            color: #D0D0D0;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
+            z-index: 10;
+        }
+        #footer-explanation p {
+            margin-bottom: 0.25rem; 
+        }
+        #footer-explanation a {
+            color: #00ffdd; 
+            text-decoration: underline;
+        }
+        #footer-explanation a:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="main-title">InnovateHealth - Digital Product Abstraction Layers</h1>
+    <div id="scene-container"></div>
+    <div id="info-panel">
+        <button id="close-button">&times;</button>
+        <h2 id="info-title"></h2>
+        <p><strong>Rules:</strong><br><span id="info-rules"></span></p>
+        <p><strong>Assessment:</strong><br><span id="info-assessment"></span></p>
+    </div>
+    <div id="intro-text">
+        <p>
+            Let's consider "InnovateHealth," a hypothetical US company providing digital health services (e.g., telehealth apps, wellness platforms). It operates nationwide.
+            Entity: InnovateHealth (the company) Sub-Entity: "WellTrack" (a new AI-powered wellness monitoring app).
+            Here's how the abstraction layers and rules apply, incorporating the requested architectural dimensions as represented in the legend.
+        </p>
+    </div>
+    <div id="instructions">
+        <p>Click on 3D objects or legend items for details.</p>
+    </div>
+    <div id="html-legend"></div>
+    <div id="footer-explanation">
+        <p>
+            This 3D representation is a prototype to visualize the abstraction layers of rule-based entities and their evaluation, 
+            as conceptualized in the articles: 
+            <a href="https://datatunnel.io/ai-rule-based-entities-abstraction-evaluation-agi-asi-futures/" target="_blank" rel="noopener noreferrer">AI Rule-Based Entities: Abstraction, Evaluation, AGI/ASI Futures</a> 
+            and the published work on 
+            <a href="https://datatunnel.io/aci-architecture-evaluation-methodology/" target="_blank" rel="noopener noreferrer">ACI Architecture Evaluation Methodology</a>.
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.7rem;">This prototype was built using Gemini 2.5 Pro (preview).</p>
+    </div>
+
+
+    <script>
+        console.log("Script execution started.");
+
+        if (typeof THREE === 'undefined') {
+            console.error('CRITICAL ERROR: Three.js library not loaded!');
+        }
+
+        let scene, camera, renderer, raycaster, mouse;
+        const interactiveObjects = [];
+        let INTERSECTED;
+        const connectionLines = new THREE.Group(); 
+        const appLayerColor = 0x20B2AA; 
+        const highlightColor = 0xFFD700; 
+
+        const layersData = [ 
+            { name: "Global/National Legal & Regulatory Layer", shortTitle: "Global/Natl Reg.", shape: "Torus", color: 0x00ffff, size: [20, 0.7, 16, 100], position: [0, 0, 0], opacity: 0.15, wireframe: true, rules: "HIPAA (Health Insurance Portability and Accountability Act), FDA regulations (if WellTrack qualifies as a medical device), FTC rules on data privacy and security, US federal laws.", assessment: "Legal teams, compliance officers review WellTrack's concept, data handling, and claims against federal mandates before development starts and continuously." },
+            { name: "State/Local Regulatory Layer", shortTitle: "State/Local Reg.", shape: "Torus", color: 0xff00ff, size: [18, 0.6, 16, 100], position: [0, 0, 0], opacity: 0.2, wireframe: true, rules: "State-specific data breach notification laws, state medical board regulations impacting telehealth features, potentially differing privacy laws (like CCPA/CPRA in California).", assessment: "Legal and compliance adapt assessments based on the states where WellTrack will be available. Geo-fencing or feature variations might be needed." },
+            { name: "Industry Standards Layer", shortTitle: "Industry Stds.", shape: "Torus", color: 0x00ff00, size: [16, 0.5, 16, 100], position: [0, 0, 0], opacity: 0.4, rules: "Security standards (e.g., alignment with NIST Cybersecurity Framework), potential interoperability standards (like HL7 FHIR for health data exchange).", assessment: "Security teams and architects review WellTrack's design against frameworks like NIST CSF or potentially implement controls based on ISO 27001." },
+            { name: "Corporate Governance & Strategy Layer (InnovateHealth)", shortTitle: "Corp. Gov.", shape: "Torus", color: 0xffff00, size: [14, 0.4, 16, 100], position: [0, 0, 0], opacity: 0.6, rules: "InnovateHealth's overall mission, ethical guidelines (especially crucial for AI), risk appetite, investment policies, internal data governance policies (perhaps guided by DAMA-DMBOK principles), corporate security policies (possibly using SABSA for business alignment).", assessment: "Enterprise Architecture: Defines the overall business capabilities, strategic goals WellTrack must support, and cross-company standards. Assessment ensures WellTrack aligns with InnovateHealth's strategic direction and risk tolerance. A framework like TOGAF might guide this alignment." },
+            { name: "Business Unit/Product Line Layer", shortTitle: "Business Unit", shape: "Torus", color: 0xff9900, size: [12, 0.3, 16, 100], position: [0, 0, 0], opacity: 0.7, rules: "Specific business goals for the wellness division, market strategy for WellTrack, defined KPIs, user acquisition targets.", assessment: "Business Processes: Documents the core user journeys (registration, monitoring, reporting), support processes, and how WellTrack integrates with other InnovateHealth services. Assessment checks if processes are efficient, compliant, and meet business objectives." },
+            { name: "Digital Product Layer (WellTrack)", shortTitle: "WellTrack Prod.", shape: "Torus", color: 0xcc00ff, size: [10, 0.25, 16, 100], position: [0, 0, 0], opacity: 0.8, rules: "Detailed functional and non-functional requirements for WellTrack, specific privacy policies for the app (potentially using NIST Privacy Framework or ISO 27701 controls as a basis), AI-specific requirements (fairness criteria, explainability needs).", assessment: "Digital Business Requirements/Functional Processes: Defines exactly what WellTrack should do, user interface flows, interaction logic. Assessment involves user acceptance testing, functional testing, and importantly, AI-specific reviews (e.g., using an AI-ARF approach) to check for bias, transparency, and adherence to ethical guidelines. Every update or new feature launch triggers reassessment." },
+            { 
+                name: "Application/System Architecture Layer", 
+                shortTitle: "App Arch.", 
+                shape: "AppComponents", 
+                color: appLayerColor, 
+                position: [0, 4.5, 0], 
+                rules: "Cx stands for an application component of a software component such as WellTrack's software use-case. Chosen architectural patterns (e.g., microservices, serverless), API design standards, coding standards, specific security controls for the application layer (e.g., input validation to prevent prompt injection).", 
+                assessment: "Application Architecture: Models how WellTrack's software components interact (potentially using ArchiMate). Includes the AI model(s), front-end, back-end services, APIs. Assessment involves code reviews, security scans, architectural reviews (again, augmented by AI-ARF for AI components), ensuring secure design principles are followed." 
+            },
+            { 
+                name: "Technology Architecture Layer", 
+                shortTitle: "Tech. Arch.", 
+                shape: "Cylinder", 
+                color: 0x888888, 
+                size: [4.5, 4.5, 0.9, 32], 
+                position: [0, 0.9, 0], 
+                rules: "Approved cloud provider standards (e.g., AWS SRA examples), database standards, network security rules.", 
+                assessment: "Technology Architecture: Defines the underlying infrastructure (cloud services, servers, networks). Assessment includes infrastructure security audits." 
+            },
+            { 
+                name: "Data Architecture Layer", 
+                shortTitle: "Data Arch.", 
+                shape: "Cylinder", 
+                color: 0xff6347, 
+                size: [5.4, 5.4, 0.9, 32], 
+                position: [0, -0.45, 0], 
+                rules: "Data encryption policies, data retention policies, specific data handling rules for PII/PHI based on privacy frameworks.", 
+                assessment: "Data Architecture: Defines how WellTrack data is stored, managed, integrated, and secured. Assessment includes data storage security checks, validation of data lineage and quality processes, and privacy control verification." 
+            }
+        ];
+
+        const infoPanel = document.getElementById('info-panel');
+        const infoTitle = document.getElementById('info-title');
+        const infoRules = document.getElementById('info-rules');
+        const infoAssessment = document.getElementById('info-assessment');
+        const closeButton = document.getElementById('close-button');
+        const htmlLegendContainer = document.getElementById('html-legend');
+
+        try { init(); } catch (e) { console.error("INIT ERROR:", e); }
+        try { if (typeof THREE !== 'undefined') animate(); } catch (e) { console.error("ANIMATE ERROR:", e); }
+
+        function createCharacterSprite(character, parameters) { 
+            const fontface = parameters.fontface || 'Inter';
+            const fontsize = parameters.fontsize || 24; 
+            const fontWeight = parameters.fontWeight || '500'; 
+            const textColor = parameters.textColor || { r:255, g:255, b:255, a:1.0 }; 
+            const strokeColor = parameters.strokeColor || { r:0, g:0, b:0, a:1.0 }; 
+            const strokeWidth = parameters.strokeWidth || 2; 
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = `${fontWeight} ${fontsize}px ${fontface}`; 
+            const metrics = context.measureText(character);
+            canvas.width = metrics.width + strokeWidth * 2 + 4; 
+            canvas.height = fontsize * 1.2 + strokeWidth * 2; 
+            
+            context.font = `${fontWeight} ${fontsize}px ${fontface}`; 
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+
+            context.strokeStyle = `rgba(${strokeColor.r},${strokeColor.g},${strokeColor.b},${strokeColor.a})`;
+            context.lineWidth = strokeWidth;
+            context.strokeText(character, canvas.width / 2, canvas.height / 2);
+            
+            context.fillStyle = `rgba(${textColor.r},${textColor.g},${textColor.b},${textColor.a})`;
+            context.fillText(character, canvas.width / 2, canvas.height / 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthTest: false, depthWrite: false, transparent: true });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(canvas.width / 70, canvas.height / 70, 1.0); 
+            return sprite;
+        }
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000); 
+            scene.add(connectionLines); 
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 12, 35); 
+            camera.lookAt(scene.position);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('scene-container').appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 0.6);
+            scene.add(hemiLight);
+            const pointLight = new THREE.PointLight(0xffffff, 0.8, 100);
+            pointLight.position.set(0, 20, 0);
+            scene.add(pointLight);
+
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2(); 
+
+            let techArchLayerObject; 
+
+            layersData.forEach((data, layerIndex) => {
+                let objectGroup = new THREE.Group(); 
+                let geometry, material;
+
+                if (data.shape === "Torus") {
+                    geometry = new THREE.TorusGeometry(...data.size);
+                    material = new THREE.MeshPhongMaterial({
+                        color: data.color, transparent: true, opacity: data.opacity,
+                        side: THREE.DoubleSide, emissive: data.color, emissiveIntensity: 0.3 
+                    });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.userData.originalEmissive = new THREE.Color(data.color); 
+                    mesh.userData.originalEmissiveIntensity = 0.3;
+                    mesh.userData.originalScale = mesh.scale.clone(); 
+                    objectGroup.add(mesh);
+
+                    if (data.wireframe) {
+                        const wireframeMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(data.color).multiplyScalar(1.5), wireframe: true, transparent: true, opacity: data.opacity + 0.2 });
+                        const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+                        objectGroup.add(wireframeMesh);
+                    }
+                } else if (data.shape === "AppComponents") {
+                    const numComponents = 5;
+                    const componentRadius = 4.5; 
+                    
+                    const compWidth = 1.8; 
+                    const compHeight = 0.9; 
+                    const compDepth = 1.2; 
+                    const componentGeo = new THREE.BoxGeometry(compWidth, compHeight, compDepth); 
+
+                    for (let i = 0; i < numComponents; i++) {
+                        const angle = (i / numComponents) * Math.PI * 2;
+                        const x = componentRadius * Math.cos(angle);
+                        const z = componentRadius * Math.sin(angle);
+
+                        const mat = new THREE.MeshPhongMaterial({color: data.color, emissive: data.color, emissiveIntensity: 0.4});
+                        const componentMesh = new THREE.Mesh(componentGeo, mat);
+                        componentMesh.position.set(x, 0, z); 
+                        componentMesh.userData.originalEmissive = new THREE.Color(data.color);
+                        componentMesh.userData.originalEmissiveIntensity = 0.4;
+                        componentMesh.userData.originalScale = componentMesh.scale.clone();
+                        
+                        const labelSprite = createCharacterSprite(`C${i+1}`, {
+                            fontsize: 40, 
+                            fontWeight: 'bold', 
+                            textColor: {r:255,g:255,b:255,a:1}, 
+                            strokeColor: {r:0, g:0, b:0, a:1.0},   
+                            strokeWidth: 2 
+                        });
+                        labelSprite.position.set(0, 0, compDepth / 2 + 0.1); 
+                        componentMesh.add(labelSprite); 
+
+                        objectGroup.add(componentMesh); 
+                    }
+                } else if (data.shape === "Cylinder") {
+                    geometry = new THREE.CylinderGeometry(...data.size); 
+                    material = new THREE.MeshPhongMaterial({ color: data.color, emissive: data.color, emissiveIntensity: 0.2 });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.userData.originalEmissive = new THREE.Color(data.color);
+                    mesh.userData.originalEmissiveIntensity = 0.2;
+                    mesh.userData.originalScale = mesh.scale.clone();
+                    objectGroup.add(mesh); 
+                    if (data.name === "Technology Architecture Layer") techArchLayerObject = objectGroup;
+                }
+                
+                objectGroup.position.set(...data.position); 
+                objectGroup.userData = data; 
+                objectGroup.userData.originalObject = objectGroup; 
+                objectGroup.userData.originalScale = objectGroup.scale.clone(); 
+                scene.add(objectGroup);
+                interactiveObjects.push(objectGroup); 
+
+                const legendItem = document.createElement('div');
+                legendItem.className = 'html-legend-item';
+                const colorBox = document.createElement('div');
+                colorBox.className = 'html-legend-color-box';
+                colorBox.style.backgroundColor = `#${new THREE.Color(data.color).getHexString()}`;
+                legendItem.appendChild(colorBox);
+                const legendText = document.createElement('span');
+                legendText.textContent = data.name;
+                legendItem.appendChild(legendText);
+                const arrow = document.createElement('span');
+                arrow.className = 'html-legend-arrow';
+                arrow.innerHTML = '&rarr;'; 
+                legendItem.appendChild(arrow);
+                
+                legendItem.addEventListener('click', () => {
+                    handleLayerInteraction(objectGroup);
+                });
+                htmlLegendContainer.appendChild(legendItem);
+            });
+
+            const appArchLayer = interactiveObjects.find(obj => obj.userData.name === "Application/System Architecture Layer");
+            if (appArchLayer && techArchLayerObject) {
+                const techArchTopY = techArchLayerObject.position.y + techArchLayerObject.children[0].geometry.parameters.height / 2;
+                const techArchCenter = new THREE.Vector3(techArchLayerObject.position.x, techArchTopY, techArchLayerObject.position.z);
+
+                appArchLayer.children.forEach(componentMesh => { 
+                    if (componentMesh instanceof THREE.Mesh) { 
+                        const startPoint = new THREE.Vector3();
+                        const relativePos = componentMesh.position.clone();
+                        startPoint.copy(appArchLayer.position).add(relativePos);
+                        startPoint.y -= componentMesh.geometry.parameters.height / 2; 
+
+                        const points = [startPoint, techArchCenter];
+                        const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+                        const lineMat = new THREE.LineBasicMaterial({ color: appLayerColor, linewidth: 1.5 }); 
+                        const line = new THREE.Line(lineGeo, lineMat);
+                        connectionLines.add(line);
+                    }
+                });
+            }
+            
+            const container = document.getElementById('scene-container');
+            window.addEventListener('resize', onWindowResize);
+            container.addEventListener('mousedown', onMouseDown); 
+            container.addEventListener('touchstart', onTouchStart, { passive: false });
+            closeButton.addEventListener('click', closeInfoPanel);
+            console.log("init function completed.");
+        }
+
+        function handleLayerInteraction(selectedObjectOrGroup) {
+            if (INTERSECTED !== selectedObjectOrGroup) {
+                closeInfoPanel(); 
+                
+                INTERSECTED = selectedObjectOrGroup;
+                const data = INTERSECTED.userData;
+                
+                if (data.shape === "Torus" || data.shape === "Cylinder") {
+                    const mainMesh = INTERSECTED.children.find(child => child.isMesh && child.material && !child.material.wireframe && child.material.emissive);
+                    if (mainMesh) {
+                        mainMesh.material.emissive.setHex(highlightColor); 
+                        mainMesh.material.emissiveIntensity = 0.7; 
+                    }
+                } else if (data.shape === "AppComponents") { 
+                    INTERSECTED.children.forEach(component => { 
+                        if(component.isMesh && component.material && component.material.emissive) { 
+                            component.material.emissive.setHex(highlightColor);
+                            component.material.emissiveIntensity = 0.7;
+                        }
+                    });
+                }
+
+                infoTitle.textContent = data.name;
+                infoRules.textContent = data.rules;
+                infoAssessment.textContent = data.assessment; 
+                infoPanel.style.display = 'block';
+            } else { 
+                closeInfoPanel();
+            }
+        }
+
+
+        function closeInfoPanel() {
+            infoPanel.style.display = 'none';
+            if (INTERSECTED) {
+                const data = INTERSECTED.userData;
+                INTERSECTED.scale.copy(INTERSECTED.userData.originalScale);
+
+                if (data.shape === "Torus" || data.shape === "Cylinder") {
+                    const mainMesh = INTERSECTED.children.find(child => child.isMesh && child.material && !child.material.wireframe && child.material.emissive);
+                    if (mainMesh) {
+                        mainMesh.material.emissive.set(mainMesh.userData.originalEmissive);
+                        mainMesh.material.emissiveIntensity = mainMesh.userData.originalEmissiveIntensity;
+                    }
+                } else if (data.shape === "AppComponents") {
+                     INTERSECTED.children.forEach(component => { 
+                        if(component.isMesh && component.material && component.material.emissive) {
+                            component.material.emissive.set(component.userData.originalEmissive);
+                            component.material.emissiveIntensity = component.userData.originalEmissiveIntensity;
+                        }
+                     });
+                }
+            }
+            INTERSECTED = null;
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function getPointerPosition(event) {
+            let x, y;
+            if (event.changedTouches && event.changedTouches.length > 0) { x = event.changedTouches[0].clientX; y = event.changedTouches[0].clientY; }
+            else if (event.touches && event.touches.length > 0) { x = event.touches[0].clientX; y = event.touches[0].clientY; }
+            else { x = event.clientX; y = event.clientY; }
+            return { x, y };
+        }
+        
+        function onMouseDown(event) {
+            const pos = getPointerPosition(event);
+            mouse.x = (pos.x / window.innerWidth) * 2 - 1;
+            mouse.y = -(pos.y / window.innerHeight) * 2 + 1;
+            performRaycast();
+        }
+
+        function onTouchStart(event) {
+            event.preventDefault(); 
+            if (event.touches.length === 1) { 
+                const touch = event.touches[0];
+                mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+                performRaycast();
+            }
+        }
+
+        function performRaycast() {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveObjects, true); 
+
+            if (intersects.length > 0) {
+                let selectedObjectOrGroup = intersects[0].object;
+                while (selectedObjectOrGroup.parent && interactiveObjects.indexOf(selectedObjectOrGroup) === -1) {
+                    if (selectedObjectOrGroup.parent === scene || selectedObjectOrGroup.material instanceof THREE.SpriteMaterial) break; 
+                    selectedObjectOrGroup = selectedObjectOrGroup.parent;
+                }
+                
+                if(selectedObjectOrGroup.material instanceof THREE.SpriteMaterial && selectedObjectOrGroup.parent && selectedObjectOrGroup.parent.isMesh) {
+                     let appCompGroup = selectedObjectOrGroup.parent.parent;
+                     if(appCompGroup && appCompGroup.userData && appCompGroup.userData.shape === "AppComponents") {
+                        selectedObjectOrGroup = appCompGroup;
+                     }
+                } else if (interactiveObjects.indexOf(selectedObjectOrGroup) === -1) {
+                     if(selectedObjectOrGroup.parent && selectedObjectOrGroup.parent.userData && selectedObjectOrGroup.parent.userData.shape === "AppComponents") {
+                        selectedObjectOrGroup = selectedObjectOrGroup.parent;
+                     } else {
+                        return; 
+                     }
+                }
+                
+                handleLayerInteraction(selectedObjectOrGroup);
+
+            } else { 
+                if (infoPanel.style.display !== 'none') {
+                    closeInfoPanel();
+                }
+            }
+        }
+        
+
+        function animate() {
+            try {
+                requestAnimationFrame(animate);
+
+                if (INTERSECTED) {
+                    const pulseSpeed = 0.005;
+                    const pulseMagnitude = 0.02; 
+                    const scaleFactor = 1 + Math.sin(Date.now() * pulseSpeed) * pulseMagnitude;
+                    INTERSECTED.scale.set(
+                        INTERSECTED.userData.originalScale.x * scaleFactor,
+                        INTERSECTED.userData.originalScale.y * scaleFactor,
+                        INTERSECTED.userData.originalScale.z * scaleFactor
+                    );
+                }
+
+                renderer.render(scene, camera);
+            } catch (e) {
+                console.error("ERROR IN ANIMATION FRAME:", e.message, e.stack);
+            }
+        }
+        
+        window.onload = () => {
+            console.log("window.onload event fired.");
+            // Adjust left panel positions dynamically based on intro-text height
+            const introTextElement = document.getElementById('intro-text');
+            const instructionsElement = document.getElementById('instructions');
+            const legendElement = document.getElementById('html-legend');
+            const mainTitleElement = document.getElementById('main-title');
+
+            if (introTextElement && instructionsElement && legendElement && mainTitleElement) {
+                const mainTitleHeight = mainTitleElement.offsetHeight;
+                const introTextHeight = introTextElement.offsetHeight;
+                const panelMargin = 10; // px
+
+                let currentTop = mainTitleHeight + panelMargin * 2; // Start below title
+                introTextElement.style.top = `${currentTop}px`;
+                
+                currentTop += introTextHeight + panelMargin;
+                instructionsElement.style.top = `${currentTop}px`;
+
+                currentTop += instructionsElement.offsetHeight + panelMargin;
+                legendElement.style.top = `${currentTop}px`;
+
+                // Adjust max-height for legend based on new top and footer
+                const footerHeight = document.getElementById('footer-explanation').offsetHeight + 20; // Include bottom margin
+                legendElement.style.maxHeight = `calc(100vh - ${currentTop}px - ${footerHeight}px)`;
+                 // Adjust info panel top if it overlaps with title significantly
+                document.getElementById('info-panel').style.top = `${mainTitleHeight + panelMargin *2}px`;
+                document.getElementById('info-panel').style.maxHeight = `calc(100vh - ${mainTitleHeight + panelMargin *2}px - 20px)`;
+
+
+            }
+
+
+        };
+        console.log("Script execution finished defining functions and setting up event listeners.");
+    </script>
+</body>
+</html>
